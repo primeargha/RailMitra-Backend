@@ -1,0 +1,84 @@
+---
+description: RailMitra product plan, microservices scope, HLD/LLD learning roadmap, and infra targets
+alwaysApply: true
+---
+
+# RailMitra — Project Scope & Learning Plan
+
+Learner rebuild of `server/refer_code_irctc-backend` (YouTube tutorial) in TypeScript. Always keep **HLD** (how services talk) and **LLD** (classes, locks, adapters, DB design) in mind for each feature.
+
+**Reference mapping tip:** tutorial `inventory-service` ≈ our **route/inventory** domain (stations, trains, routes). Prefer tutorial service names when reading reference code; use clearer names in our rebuild only if the learner agrees.
+
+## Current phase
+
+- **Now:** `user-service` — TypeScript Express base setup done; next foundation pieces (config, logger, etc.) then auth.
+- **Next (planned order):** finish user-service → search-service → route/inventory → booking → payment → archival → production deploy.
+- Update this section when the active phase changes.
+
+## Microservices (feature scope)
+
+### 1. User service
+- Sign up / login (email + password)
+- Google authentication via **Google Identity Services** (GIS) — verify Google ID tokens on the backend; follow latest Google Identity docs (not legacy gapi-only flows)
+- User profile management
+- All auth + profile lives here (microservice boundary)
+
+### 2. Search service
+- Find trains from source → destination
+- Fuzzy search + autocomplete
+- Elasticsearch
+
+### 3. Route / inventory service
+- Station entry
+- New train entry
+- New route entry
+- (Maps to reference `inventory-service`)
+
+### 4. Booking service
+- Concurrent booking under load
+- Locking strategies (study + implement as tutorial shows):
+  - Redis distributed lock
+  - Row-level exclusive lock (PostgreSQL)
+  - Optimistic concurrency control (OCC)
+- Partial booking support
+
+### 5. Payment service
+- Configure multiple payment gateways
+- **Adapter pattern** (LLD): common gateway interface + per-gateway adapters
+- (Reference uses gateway factory / base gateway pattern)
+
+### 6. Archival service
+- After ~5–6 days, completed bookings move to a “completed/archived” category
+- Fetch completed bookings and dump into **Apache Cassandra**
+- Hot path stays in PostgreSQL; cold/history data in Cassandra
+
+## Shared / external infrastructure
+
+| Concern | Choice |
+|--------|--------|
+| Cache / locks | Redis |
+| Primary DB | PostgreSQL + Prisma |
+| Inter-service communication | **Apache Kafka** (events between microservices; same approach as the tutorial) |
+| Async jobs inside a service (email, notifications, payment orders) | BullMQ |
+| Email | Resend |
+| Local infra | Docker Compose (Postgres, Redis, Kafka, and other containers as needed) |
+
+**Messaging split (HLD):** use **Kafka** for service-to-service events (e.g. booking created → payment / notification / search index). Use **BullMQ** for background work owned by one service (retries, delayed jobs, email send). Align Kafka topics/producers/consumers with `refer_code_irctc-backend` when rebuilding each service.
+
+## Environments & production (later)
+
+- Environments: **local/dev**, **staging**, **production**
+- Production traffic target: services on **AWS EC2**
+- Domain → EC2 public IP
+- **HTTPS** via reverse proxy (**Nginx**) + **Let's Encrypt** SSL
+- Dockerized services on the server; keep configs env-specific (never bake secrets into images)
+
+## Out of scope for early steps
+
+- Do not jump to AWS/Nginx/SSL before local services work
+- Do not build all services at once — one service / one feature step at a time
+- Frontend comes after (or alongside later); this plan is backend-first
+
+## Agent reminder
+
+Before proposing code: read matching files under `refer_code_irctc-backend/`, check latest docs for the tools in that step, propose **one** step, wait for approval, then show **copy-ready** snippets. **Do not edit the codebase yourself** — the learner types/copies for learning. Flag AWS/Docker/scaling risks as learning notes, don’t silently rewrite the tutorial design.
