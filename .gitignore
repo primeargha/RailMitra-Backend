@@ -43,6 +43,7 @@ pnpm-debug.log*
 # Keep migrations in git; ignore generated client if you generate it locally
 # prisma/migrations/   # DO NOT uncomment unless you intentionally skip migrations
 /src/generated/prisma
+generated
 prisma/*.db
 prisma/*.db-journal
 
