@@ -22,6 +22,8 @@ export const config = {
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean),
+  DATABASE_URL: required("DATABASE_URL"),
+  REDIS_URL: required("REDIS_URL"),
 } as const;
 
 if (config.ALLOWED_ORIGINS.length === 0) {
