@@ -22,6 +22,7 @@ Learner rebuild of `server/refer_code_irctc-backend` (YouTube tutorial) in TypeS
 - Google authentication via **Google Identity Services** (GIS) — verify Google ID tokens on the backend; follow latest Google Identity docs (not legacy gapi-only flows)
 - User profile management
 - All auth + profile lives here (microservice boundary)
+- **Email (LLD):** do not call Resend/SendGrid directly from auth services. Use a common `EmailProvider` (or mailer) interface + adapters (`ResendEmailAdapter`, later `SendGridEmailAdapter`). Pick provider via env (e.g. `EMAIL_PROVIDER=resend`). Same idea as payment gateway adapters.
 
 ### 2. Search service
 - Find trains from source → destination
@@ -60,7 +61,7 @@ Learner rebuild of `server/refer_code_irctc-backend` (YouTube tutorial) in TypeS
 | Primary DB | PostgreSQL + Prisma |
 | Inter-service communication | **Apache Kafka** (events between microservices; same approach as the tutorial) |
 | Async jobs inside a service (email, notifications, payment orders) | BullMQ |
-| Email | Resend |
+| Email | **Resend** (default). Teacher used SendGrid. Design with **adapter / strategy** so providers are swappable (Resend ↔ SendGrid ↔ SES) without rewriting business logic |
 | Local infra | Docker Compose (Postgres, Redis, Kafka, and other containers as needed) |
 
 **Messaging split (HLD):** use **Kafka** for service-to-service events (e.g. booking created → payment / notification / search index). Use **BullMQ** for background work owned by one service (retries, delayed jobs, email send). Align Kafka topics/producers/consumers with `refer_code_irctc-backend` when rebuilding each service.

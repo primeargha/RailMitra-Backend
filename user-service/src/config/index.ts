@@ -24,6 +24,9 @@ export const config = {
     .filter(Boolean),
   DATABASE_URL: required("DATABASE_URL"),
   REDIS_URL: required("REDIS_URL"),
+  EMAIL_PROVIDER: required("EMAIL_PROVIDER"), // "resend" for now
+  RESEND_API_KEY: required("RESEND_API_KEY"),
+  MAIL_FROM: required("MAIL_FROM"),
 } as const;
 
 if (config.ALLOWED_ORIGINS.length === 0) {
