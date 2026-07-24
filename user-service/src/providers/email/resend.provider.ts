@@ -1,8 +1,8 @@
 import { Resend } from "resend";
 import { config } from "@/config/index.js";
 import { logger } from "@/config/logger.js";
-import type { EmailProvider, SendEmailInput } from "./email.types.js";
 import { InternalServerError } from "@/utils/error.js";
+import type { EmailProvider, SendEmailInput } from "./email.types.js";
 
 export class ResendEmailProvider implements EmailProvider {
   private readonly client: Resend;

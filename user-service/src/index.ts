@@ -1,12 +1,12 @@
 import "dotenv/config";
+import cookieParser from "cookie-parser";
 import express, { type Request, type Response } from "express";
 import helmet from "helmet";
-import cookieParser from "cookie-parser";
 import { config } from "@/config/index.js";
 import { logger } from "@/config/logger.js";
 import { corsMiddleware } from "@/middlewares/cors.middleware.js";
-import { reqLogger } from "@/middlewares/req.middleware.js";
 import { errorHandler } from "@/middlewares/error.middleware.js";
+import { reqLogger } from "@/middlewares/req.middleware.js";
 import { emailService } from "@/services/email.service.js";
 import { BadRequestError } from "@/utils/error.js";
 
@@ -43,7 +43,5 @@ app.post("/test-email", async (req, res, next) => {
 app.use(errorHandler);
 
 app.listen(config.PORT, () => {
-  logger.info(
-    `${config.SERVICE_NAME} is running on http://localhost:${config.PORT}`,
-  );
+  logger.info(`${config.SERVICE_NAME} is running on http://localhost:${config.PORT}`);
 });

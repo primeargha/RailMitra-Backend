@@ -1,30 +1,25 @@
 import type { NextFunction, Request, Response } from "express";
-import { AppError } from "@/utils/error.js";
 import { config } from "@/config/index.js";
 import { logger } from "@/config/logger.js";
+import { AppError } from "@/utils/error.js";
 
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-) => {
-    if (err instanceof AppError) {
-        logger.warn(
-          {
-            code: err.code,
-            statusCode: err.statusCode,
-            path: req.path,
-            method: req.method,
-          },
-          err.message, // e.g. "Test resource not found"
-        );
-        return res.status(err.statusCode).json({
-          success: false,
-          error: err.code,
-          message: err.message,
-        });
-      }
+export const errorHandler = (err: Error, req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof AppError) {
+    logger.warn(
+      {
+        code: err.code,
+        statusCode: err.statusCode,
+        path: req.path,
+        method: req.method,
+      },
+      err.message, // e.g. "Test resource not found"
+    );
+    return res.status(err.statusCode).json({
+      success: false,
+      error: err.code,
+      message: err.message,
+    });
+  }
 
   logger.error(
     {

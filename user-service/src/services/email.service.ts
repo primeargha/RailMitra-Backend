@@ -1,8 +1,5 @@
 import { createEmailProvider } from "@/providers/email/email.factory.js";
-import {
-  getOtpTemplate,
-  getWelcomeTemplate,
-} from "@/templates/email.templates.js";
+import { getOtpTemplate, getWelcomeTemplate } from "@/templates/email.templates.js";
 
 const emailProvider = createEmailProvider();
 

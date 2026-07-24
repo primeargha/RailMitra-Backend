@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+set -e
+
+# Only staged files; biome.json already limits to **/src/**
+# No --write → commit BLOCKED until developer fixes
+npx biome check --staged

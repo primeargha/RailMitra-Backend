@@ -1,0 +1,16 @@
+{
+  "name": "railmitra-server",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "lint": "biome lint ./user-service/src",
+    "format": "biome format --write ./user-service/src",
+    "check": "biome check ./user-service/src",
+    "check:fix": "biome check --write ./user-service/src",
+    "check:staged": "biome check --staged"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.8",
+    "husky": "^9.1.7"
+  }
+}
